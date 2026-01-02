@@ -19,7 +19,7 @@ class TestEbookDownloader(unittest.TestCase):
             shutil.rmtree(self.test_output_dir)
         os.makedirs(self.test_output_dir, exist_ok=True)
 
-    @patch('requests.get')
+    @patch('scraper.get')
     def test_should_download_file_successfully_given_simple_filepath(self, mock_get):
         mock_response = Mock()
         mock_response.status_code = 200
@@ -36,7 +36,7 @@ class TestEbookDownloader(unittest.TestCase):
             content = file.read()
             self.assertEqual(content, b"Test file content")
 
-    @patch('requests.get')
+    @patch('scraper.get')
     def test_should_not_create_file_when_file_not_found(self, mock_get):
         mock_response = Mock()
         mock_response.status_code = 404
@@ -49,7 +49,7 @@ class TestEbookDownloader(unittest.TestCase):
         local_path = os.path.join(self.test_output_dir, self.file_path)
         self.assertFalse(os.path.exists(local_path))
 
-    @patch('requests.get')
+    @patch('scraper.get')
     def test_should_create_directory_to_download_file_successfully_given_filepath(self, mock_get):
         mock_response = Mock()
         mock_response.status_code = 200

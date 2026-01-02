@@ -1,6 +1,6 @@
 from urllib.parse import urlparse
 import re
-import requests
+import cloudscraper
 from bs4 import BeautifulSoup, Tag
 
 from src.epub_locator.epub_handler import EpubHandler
@@ -40,7 +40,8 @@ class EpubPubHandler(EpubHandler):
 
     def _get_epub_pub_read_online_url(self) -> str:
         self.logster.log(f"Fetching read online link from url {self.url}")
-        response = requests.get(self.url)
+        scraper = cloudscraper.create_scraper()
+        response = scraper.get(self.url)
         response.raise_for_status()
         soup = BeautifulSoup(response.content, "html.parser")
         read_online_button: str = soup.find("a", class_="btn-read")
@@ -55,7 +56,8 @@ class EpubPubHandler(EpubHandler):
 
     def _get_epub_pub_ebook_content_opf_url(self, read_online_url: str) -> str:
         self.logster.log(f"Fetching content.opf from url {read_online_url}")
-        response = requests.get(read_online_url)
+        scraper = cloudscraper.create_scraper()
+        response = scraper.get(read_online_url)
         response.raise_for_status()
         soup = BeautifulSoup(response.content, "html.parser")
         for script in soup.findAll("script"):

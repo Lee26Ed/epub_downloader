@@ -1,11 +1,12 @@
-import requests
+import cloudscraper
 from bs4 import BeautifulSoup
 from src.epub_locator.epub_handler import EpubHandler
 
 
 class ReadAnyBookHandler(EpubHandler):
     def get_epub_base_url(self) -> str:
-        response = requests.get(self.url)
+        scraper = cloudscraper.create_scraper()
+        response = scraper.get(self.url)
         response.raise_for_status()
 
         soup = BeautifulSoup(response.content, 'html.parser')

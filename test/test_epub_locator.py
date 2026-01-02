@@ -25,7 +25,7 @@ class TestEpubLocator(unittest.TestCase):
             </body> </html>
             '''
 
-    def mock_requests_get(self, url):
+    def mock_scraper_get(self, url):
         if url == self.epub_pub_url:
             return self._create_mock_response(self.initial_response_html)
         elif url == self.spread_url:
@@ -40,7 +40,7 @@ class TestEpubLocator(unittest.TestCase):
         mock_response.content = html_content.encode('utf-8')
         return mock_response
 
-    @patch('src.epub_locator.epub_locator.requests.get')
+    @patch('src.epub_locator.epub_locator.scraper.get')
     def test_should_return_url_given_non_epub_pub_url(self, mock_get):
         locator = EpubLocator(Logster(verbose=False), self.non_epub_pub_url)
         result = locator.get_epub_base_url()
@@ -51,7 +51,7 @@ class TestEpubLocator(unittest.TestCase):
 
         self.assertEqual(expected_url, result)
 
-    @patch('src.epub_locator.epub_locator.requests.get')
+    @patch('src.epub_locator.epub_locator.scraper.get')
     def test_should_return_read_online_spread_url_given_epub_pub_url(self, mock_get):
         mock_get.return_value = self._create_mock_response(self.initial_response_html)
 
@@ -63,7 +63,7 @@ class TestEpubLocator(unittest.TestCase):
         expected_url = self.spread_url
         self.assertEqual(expected_url, result)
 
-    @patch('src.epub_locator.epub_locator.requests.get')
+    @patch('src.epub_locator.epub_locator.scraper.get')
     def test_should_return_ebook_opf_url_given_epub_pub_spread_url(self, mock_get):
         mock_get.return_value = self._create_mock_response(self.spread_response_html)
 
@@ -75,9 +75,9 @@ class TestEpubLocator(unittest.TestCase):
         expected_url = self.content_opf_url
         self.assertEqual(expected_url, result)
 
-    @patch('src.epub_locator.epub_locator.requests.get')
+    @patch('src.epub_locator.epub_locator.scraper.get')
     def test_should_return_epub_pub_base_url_given_epub_pub_url(self, mock_get):
-        mock_get.side_effect = self.mock_requests_get
+        mock_get.side_effect = self.mock_scraper_get
 
         locator = EpubLocator(Logster(verbose=False), self.epub_pub_url)
         result = locator.get_epub_base_url()
@@ -91,7 +91,7 @@ class TestEpubLocator(unittest.TestCase):
         ]
         mock_get.assert_has_calls(calls, any_order=False)
 
-    @patch('src.epub_locator.epub_locator.requests.get')
+    @patch('src.epub_locator.epub_locator.scraper.get')
     def test_should_return_unknown_ebook_name_before_getting_base_url(self, mock_get):
         locator = EpubLocator(Logster(verbose=False), self.epub_pub_url)
 
@@ -102,7 +102,7 @@ class TestEpubLocator(unittest.TestCase):
 
         mock_get.assert_not_called()
 
-    @patch('src.epub_locator.epub_locator.requests.get')
+    @patch('src.epub_locator.epub_locator.scraper.get')
     def test_should_return_ebook_name_given_non_epub_pub_url_after_getting_base_url(self, mock_get):
         locator = EpubLocator(Logster(verbose=False), self.non_epub_pub_url)
         locator.get_epub_base_url()
@@ -114,9 +114,9 @@ class TestEpubLocator(unittest.TestCase):
 
         mock_get.assert_not_called()
 
-    @patch('src.epub_locator.epub_locator.requests.get')
+    @patch('src.epub_locator.epub_locator.scraper.get')
     def test_should_return_ebook_name_given_epub_pub_url_after_getting_base_url(self, mock_get):
-        mock_get.side_effect = self.mock_requests_get
+        mock_get.side_effect = self.mock_scraper_get
 
         locator = EpubLocator(Logster(verbose=False), self.epub_pub_url)
         locator.get_epub_base_url()
