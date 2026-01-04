@@ -1,7 +1,7 @@
 from urllib.parse import urlparse
 import re
 import cloudscraper
-
+from bs4 import BeautifulSoup
 from src.epub_locator.epub_handler import EpubHandler
 
 
